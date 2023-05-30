@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">UDP 7</string>
+    <string name="scan_button">Search</string>
+    <string name="search_code">code to Search</string>
+</resources>
