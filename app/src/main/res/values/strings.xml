@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">UDP 7</string>
+    <string name="app_name">Focus-Price</string>
     <string name="scan_button">Search</string>
     <string name="search_code">code to Search</string>
+    <string name="welcome">Welcome , Marhaba.</string>
+    <string name="ask">Please, Ask for assistance</string>
+    <string name="scan">Afficheur de prix</string>
 </resources>

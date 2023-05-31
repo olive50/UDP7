@@ -5,13 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.Handler
 import android.os.StrictMode
-import android.view.KeyEvent
+import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +20,8 @@ import java.net.UnknownHostException
 
 
 class MainActivity : AppCompatActivity() {
+    //lateinit var topLayaout: LinearLayout
+    var counter:Int=0
 
     //declared variables
     private var clientThread: ClientThread? = null
@@ -30,11 +29,14 @@ class MainActivity : AppCompatActivity() {
     private var tvName:TextView? = null
     private var tvPrice:TextView? = null
     private var tvStock:TextView? = null
-    var code:String="123"
+    //var code:String="123"
+    //var welcome= TextView(this)
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE)
+
         super.onCreate(savedInstanceState)
        // window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -45,6 +47,13 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
         setContentView(R.layout.activity_main)
+       // topLayaout=findViewById(R.id.infolayout)
+
+        var line1= TextView(this)
+        var line2= TextView(this)
+        var line3= TextView(this)
+
+
 
         //Create a thread so that the received data does not run within the main user interface
         clientThread = ClientThread()
@@ -52,11 +61,15 @@ class MainActivity : AppCompatActivity() {
         thread!!.start()
 
         // create a value that is linked to a button called (id) MyButton in the layout
-        val  productCode = findViewById<EditText>(R.id.tv_barcode)
+        //val  productCode = findViewById<EditText>(R.id.tv_barcode)
         //val buttonScan = findViewById<Button>(R.id.scanBtn)
         tvName = findViewById(R.id.tvName)
         //tvName!!.text = ""
         tvPrice = findViewById(R.id.tvPrice)
+        //tvPrice!!.setGravity(Gravity.CENTER_VERTICAL and  Gravity.CENTER_HORIZONTAL)
+        //tvPrice!!.gravity = Gravity.CENTER_VERTICAL
+
+        //tvPrice!!.gravity = Gravity.CENTER_HORIZONTAL
        // tvPrice!!.text = ""
         tvStock = findViewById(R.id.tvStock)
         //tvTemp!!.text = ""
@@ -74,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             //sendUDP("123")
         }
 */
-        productCode.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+      /*  productCode.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val code = v.text.toString()
                 sendUDP(code)
@@ -95,19 +108,30 @@ class MainActivity : AppCompatActivity() {
 
             }
             false
-        }
+        }*/
 
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
 
-
+    tvStock!!.setSelected(true);
     }
 
     override fun onStart() {
         super.onStart()
-        sendUDP("testcode")
+        //sendUDP("testcode")
+        //topLayaout.removeAllViews()
+       // diplayWelcome()
         registerBarcodeScannerBroadcastReceiver()
+
+        val toast = Toast.makeText(this@MainActivity, "Scan Your product to show the price", Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 0)
+        toast.show()
+    }
+
+    private fun diplayWelcome() {
+        //welcome.text=resources.getText(R.string.welcome)
+       // topLayaout.addView(welcome)
     }
 
     override fun onStop() {
@@ -118,7 +142,10 @@ class MainActivity : AppCompatActivity() {
 
 
     //************************************ Some test code to send a UDP package
-    fun sendUDP(messageStr: String) {
+    fun sendUDP(codeToSend: String) {
+        tvName?.text="Afficheur de prix"
+        tvPrice?.text=""
+        tvStock?.text="Please, scan product under the device to check the price.      Scanner vos produits sous cet appareil pour voir le prix. Merci."
         //tvName?.text = ""
         //tvPrice?.text = ""
         //tvTemp?.text = ""
@@ -129,14 +156,14 @@ class MainActivity : AppCompatActivity() {
             //Open a port to send a UDP package
             val socket = DatagramSocket()
             //socket.broadcast = true
-            val sendData = messageStr.toByteArray()
+            val sendData = codeToSend.toByteArray()
             val sendPacket = DatagramPacket(sendData, sendData.size,
                                             InetAddress.getByName(SERVER_IP),
                                              SERVERPORT)
             socket.send(sendPacket)
-            Toast.makeText(this@MainActivity,
-                "Code Sent:"+messageStr, Toast.LENGTH_SHORT).show()
-            println("Packet Sent")
+            val toast = Toast.makeText(this@MainActivity, "Code : " + codeToSend, Toast.LENGTH_SHORT)
+            toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 0)
+            toast.show()
         } catch (e: IOException) {
             println(">>>>>>>>>>>>> IOException  "+e.message)
         }
@@ -159,9 +186,10 @@ class MainActivity : AppCompatActivity() {
                     socket!!.receive(packet)
 
                     //Packet received
-                    println("Packet received from: " + packet.address.hostAddress)
+                   // println("Packet received from: " + packet.address.hostAddress)
                     val data = String(packet.data).trim { it <= ' ' }
-                    println("Packet received; data: $data")
+                    counter++
+                   // println("Packet received; data: $data")
                     //Change the text on the main activity view
                     runOnUiThread {
                        // if (tvName?.text == "") {
@@ -177,6 +205,7 @@ class MainActivity : AppCompatActivity() {
                                 tvPrice?.setGravity(2)
                             }*/
                             tvPrice?.text = data.substring(5,data.length).trim()
+                            tvStock?.text="Please, scan product under the device to check the price.      Scanner vos produits sous cet appareil pour voir le prix. Merci."
                             return@runOnUiThread
                         }
                         if(data.contains("1:01L")){
@@ -184,8 +213,9 @@ class MainActivity : AppCompatActivity() {
                         return@runOnUiThread
 
                         }else{
-                            Toast.makeText(this@MainActivity,
-                                "Info : "+data, Toast.LENGTH_SHORT).show()
+                            val toast = Toast.makeText(this@MainActivity, "Info : " + data, Toast.LENGTH_SHORT)
+                            toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 0)
+                            toast.show()
                                 return@runOnUiThread
                             }
 
@@ -222,8 +252,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val CLIENTPORT = 9001
         val SERVERPORT = 9000
-        //val SERVER_IP = "10.10.41.157"
-        val SERVER_IP = "192.168.0.191"
+        val SERVER_IP = "10.10.41.157"
+        //val SERVER_IP = "192.168.0.191"
     }
 
     // scanner
@@ -254,7 +284,15 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             if ("ok" == scanStatus) {
+
+                var x=counter
                 sendUDP(scanResult_1)
+                Handler().postDelayed({
+                    if(x==counter){
+                        tvPrice?.text = "Com error!"
+                             //tvPrice?.setAl;
+                    }
+                }, 2000)
                 //tvBarcode!!.text = scanResult_1
                // val codeId = intent.getIntExtra("SCAN_BARCODE_TYPE", -1)
                 //tvCodeId!!.text = "" + codeId

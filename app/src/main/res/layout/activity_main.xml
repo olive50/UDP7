@@ -8,7 +8,7 @@
     android:importantForAutofill="yes"
     tools:context=".MainActivity" >
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -33,12 +33,13 @@
             android:layout_weight="1"
             android:text="@string/scan_button" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
     <LinearLayout
+        android:id="@+id/infolayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="8dp"
         android:background="#000066">
@@ -48,31 +49,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-           android:textSize="32.sp"
+            android:textSize="32.sp"
             android:gravity="center"
-            android:paddingBottom="32dp"
-            android:text="Scan Product" />
+            android:paddingBottom="16dp"
+            android:text="@string/scan" />
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_height="96dp"
+            android:textColor="@color/black"
+            android:layout_margin="8dp"
             android:textSize="48.sp"
             android:textStyle="bold"
-            android:gravity="right"
-            android:text="Here" />
+            android:gravity="right|center"
+            android:paddingRight="8dp"
+
+            android:background="#FFF700"
+            android:text="" />
         <TextView
             android:id="@+id/tvStock"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="32.sp"
+            android:layout_height="80dp"
+            android:textColor="@color/white"
+            android:textSize="24.sp"
+            android:padding="8dp"
+            android:isScrollContainer="true"
             android:textStyle="bold"
-            android:background="#FFF700"
-            android:text="" />
-
-
-
+            android:background="#000000"
+            android:gravity="center"
+            android:text="Please, scan product under the device to check the price.      Scanner vos produits sous cet appareil pour voir le prix. Merci."
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"
+            />
 
     </LinearLayout>
 </LinearLayout>
